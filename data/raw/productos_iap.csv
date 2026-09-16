@@ -1,0 +1,15 @@
+producto_id,nombre,tipo,precio_base,monedas
+1,Pack Monedas S,Monedas,"0,99 €",100
+2,Pack Monedas M,monedas,"2,99 €",350
+3,Pack Monedas L,monedas,"4,99 €",650
+4,Pack Monedas XL,monedas,"9,99 €",1500
+5,Pack Monedas XXL,monedas,"19,99 €",3500
+6,Pack Monedas Mega,Monedas,"49,99 €",10000
+7,Quitar Anuncios,quitar_anuncios,"3,99 €",
+8,Pase Temporada,suscripcion,"7,99 €",
+9,Pase Temporada Plus,suscripcion,"14,99 €",
+10,Pack Vidas,monedas,"1,99 €",50
+11,Pack Inicio,Monedas,"1,99 €",200
+12,Pack Booster,monedas,"2,49 €",150
+13,Cofre Diario,monedas,"0,99 €",80
+14,Mega Oferta,monedas,"29,99 €",6000
