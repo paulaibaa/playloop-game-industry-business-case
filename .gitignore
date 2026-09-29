@@ -3,3 +3,5 @@ __pycache__/
 .ipynb_checkpoints/
 venv/
 .env
+# Credenciales locales: no subir a GitHub.
+.env

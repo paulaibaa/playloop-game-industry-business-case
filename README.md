@@ -38,16 +38,31 @@ Antes de explorar los datos, la pregunta vaga se convierte en preguntas calculab
 
 `gasto_ua` es la única tabla que se cruza por canal y no por jugador, porque el gasto de publicidad viene agregado de la red de anuncios.
 
+## Modelo de datos en PostgreSQL
+
+![Diagrama de relaciones entre usuarios, sesiones, partidas, compras, productos e ingresos publicitarios](docs/img/schema.png)
+
+`usuarios` se relaciona con `sesiones`, `partidas`, `compras` e `ingresos_ads` mediante `user_id`. Las compras también se relacionan con `productos_iap` mediante `producto_id`.
+
+La captura muestra seis tablas. `gasto_ua` es la séptima: permanece independiente, sin claves foráneas, y no aparece en esta imagen.
+
+El archivo [`sql/schema.sql`](sql/schema.sql) contiene la creación de las siete tablas, sus tipos de datos y sus restricciones.
+
 ## Estructura del proyecto
 
+```text
 playloop-game-industry/
 ├── data/
 │ ├── raw/ # CSV originales, sin tocar 
 │ └── processed/ # datos limpios, listos para calcular
 ├── notebooks/ # exploración, limpieza, cálculo de KPIs
-├── sql/ # si se carga a una base de datos
+├── sql/
+│ └── schema.sql # creación de las siete tablas en PostgreSQL
 ├── docs/ # resumen ejecutivo, gráficos exportados
+│ └── img/
+│     └── schema.png # diagrama de relaciones
 └── README.md
+```
 
 
 ## Metodología
