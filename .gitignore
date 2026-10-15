@@ -5,3 +5,4 @@ venv/
 .env
 # Credenciales locales: no subir a GitHub.
 .env
+

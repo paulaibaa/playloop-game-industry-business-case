@@ -94,6 +94,5 @@ CREATE TABLE gasto_ua (
     clics INTEGER
 );
 
--- No se exige unicidad de canal-fecha en gasto_ua: se mantienen las
--- repeticiones asociadas a la conversión de fechas, pendientes de revisión.
--- La creación del esquema no corrige esas fechas ni los gastos señalados.
+-- gasto_ua conserva su ID generado. Tras corregir las fechas, no hay
+-- combinaciones canal-fecha repetidas. Los gastos elevados siguen pendientes de validación.
