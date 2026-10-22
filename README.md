@@ -15,6 +15,12 @@ Cada instalación cuesta dinero (CPI, coste por instalación) y ese coste solo s
 
 > El mes pasado Crecimiento probó un canal nuevo, **CoinRush**. Bruno (Growth/UA) quiere subirle el 60% del presupuesto del próximo trimestre. Antes de mover ese dinero, Nerea pide algo sencillo de decir y difícil de hacer bien: ¿de verdad nos está funcionando la captación del último mes, y dónde conviene poner el presupuesto?
 
+## Resultado y entrega ejecutiva
+
+CoinRush concentra el 35% de los jugadores y tiene un CPI de 0,45 €, pero su ROAS neto observado es 0,27: aproximadamente 270 € registrados por cada 1.000 € invertidos hasta la extracción. La recomendación provisional es no aprobar el aumento de presupuesto antes de validar gastos y comparar cohortes de edad equivalente.
+
+Consultar el **[informe ejecutivo](docs/informe_ejecutivo.md)**, con la comparación por canal, la recomendación y sus límites. Gráficos: [retención](docs/img/retencion_por_canal.png), [conversión](docs/img/conversion_por_canal.png) y [ROAS](docs/img/roas_por_canal.png).
+
 ## Encuadre — preguntas medibles
 
 Antes de explorar los datos, la pregunta vaga se convierte en preguntas calculables:
