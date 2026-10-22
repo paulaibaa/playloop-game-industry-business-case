@@ -1,80 +1,77 @@
-# PlayLoop — Análisis de rendimiento de captación (UA)
+# PlayLoop — Captación, retención y retorno por canal
 
-Caso "Mundo Real" de BigDataStack. Estudio de datos aplicado a un caso de negocio simulado de la industria del gaming móvil (F2P).
+Proyecto de portfolio basado en el [caso simulado de BigDataStack](https://bigdatastack.dev/profesion/analisis-datos/mundo-real/playloop), ampliado con exploración detallada, limpieza documentada, análisis SQL y visualizaciones en Python.
 
-## Contexto del negocio
+**Tecnologías:** Python · pandas · PostgreSQL · SQLAlchemy · matplotlib · seaborn.
 
-PlayLoop Studio (Barcelona, F2P, juego principal *Match Valley*) es rentable pero está estancado en descargas orgánicas. Su modelo se basa en dos vías de ingreso:
+## Pregunta de negocio
 
-- **IAP (in-app purchases)**: solo ~1,3% de los jugadores paga alguna vez.
-- **Publicidad**: el 98,7% restante genera ingresos viendo anuncios.
+PlayLoop monetiza un juego móvil mediante compras dentro de la aplicación y anuncios. El equipo propone aumentar un 60% el presupuesto de CoinRush, un canal con muchas instalaciones y bajo coste. **¿Justifican sus resultados esa inversión?**
 
-Cada instalación cuesta dinero (CPI, coste por instalación) y ese coste solo se recupera si el jugador, a lo largo de su vida en el juego (LTV), genera más valor del que costó traerlo. Por eso el análisis no se mira jugador a jugador, sino por **cohortes** (grupos de jugadores instalados en el mismo periodo).
+## Resultados principales
 
-## Encargo
+| Indicador de CoinRush | Resultado |
+|---|---:|
+| Jugadores captados | 2.800 de 8.000 (35%) |
+| Coste por instalación (CPI) | 0,45 € |
+| Retención D7 | 2,4% |
+| Conversión a pagador | 0,11% |
+| Ingreso neto observado por jugador | 0,121 € |
+| ROAS neto observado | 0,27 |
+| Ingreso neto menos adquisición | −921,68 € |
 
-> El mes pasado Crecimiento probó un canal nuevo, **CoinRush**. Bruno (Growth/UA) quiere subirle el 60% del presupuesto del próximo trimestre. Antes de mover ese dinero, Nerea pide algo sencillo de decir y difícil de hacer bien: ¿de verdad nos está funcionando la captación del último mes, y dónde conviene poner el presupuesto?
+**Por cada 1.000 € invertidos en CoinRush, se han registrado aproximadamente 270 € netos hasta la extracción.** Su captación barata no se traduce en recuperación del gasto. La baja retención D7 aparece en los cuatro países analizados.
 
-## Resultado y entrega ejecutiva
+**Recomendación provisional:** no aprobar el aumento antes de validar los gastos elevados y comparar cohortes de edad equivalente.
 
-CoinRush concentra el 35% de los jugadores y tiene un CPI de 0,45 €, pero su ROAS neto observado es 0,27: aproximadamente 270 € registrados por cada 1.000 € invertidos hasta la extracción. La recomendación provisional es no aprobar el aumento de presupuesto antes de validar gastos y comparar cohortes de edad equivalente.
+![ROAS por canal: recuperación del gasto de adquisición](docs/img/roas_por_canal.png)
 
-Consultar el **[informe ejecutivo](docs/informe_ejecutivo.md)**, con la comparación por canal, la recomendación y sus límites. Gráficos: [retención](docs/img/retencion_por_canal.png), [conversión](docs/img/conversion_por_canal.png) y [ROAS](docs/img/roas_por_canal.png).
+**Entregas:** [informe ejecutivo](docs/informe_ejecutivo.md) · [retención por canal](docs/img/retencion_por_canal.png) · [conversión a pagador](docs/img/conversion_por_canal.png).
 
-## Encuadre — preguntas medibles
+## Datos y modelo
 
-Antes de explorar los datos, la pregunta vaga se convierte en preguntas calculables:
+Siete CSV: `usuarios`, `sesiones`, `partidas`, `compras`, `productos_iap`, `ingresos_ads` y `gasto_ua`. Las sesiones observadas abarcan del 28/05 al 22/07/2024.
 
-1. ¿Cuál es el CPI de CoinRush frente a los demás canales, en el mismo periodo?
-2. Comparando cohortes de la misma "edad" desde instalación, ¿qué retención (D1/D7) y qué tasa de pago tienen los jugadores de CoinRush frente a otros canales?
-3. ¿Cuánto ingreso neto genera de media un jugador de CoinRush hasta ahora (IAP neto de comisión de tienda + ingresos por ads), y qué ROAS (LTV/CPI) da eso?
-4. Dado que CoinRush solo lleva un mes activo, ¿hay ya datos suficientes para fiarnos de ese ROAS, o solo se pueden comparar señales tempranas (retención) porque el LTV aún no ha madurado?
+La actividad se relaciona con usuarios por `user_id`; las compras también con productos por `producto_id`. El gasto está agregado por canal y fecha: no se relaciona por jugador ni permite atribuir directamente costes a países o plataformas.
 
-## Datos disponibles
+![Modelo relacional en PostgreSQL](docs/img/schema.png)
 
-| Tabla | Granularidad | Clave | Contenido |
-|---|---|---|---|
-| `usuarios.csv` | 1 fila por jugador | `user_id` (PK) | canal de adquisición, país, plataforma, fecha de instalación |
-| `sesiones.csv` | 1 fila por apertura de la app | `user_id` (FK) | fecha, duración |
-| `partidas.csv` | 1 fila por nivel jugado | `user_id` (FK) | nivel, resultado, movimientos |
-| `compras.csv` | 1 fila por transacción | `user_id`, `producto_id` (FK) | importe, moneda, plataforma, reembolso |
-| `productos_iap.csv` | 1 fila por producto | `producto_id` (PK) | tipo, precio base |
-| `ingresos_ads.csv` | 1 fila por impresión de anuncio | `user_id` (FK) | tipo de anuncio, red, ingreso |
-| `gasto_ua.csv` | 1 fila por canal y día | — (no tiene `user_id`) | gasto, instalaciones, impresiones, clics — aquí sale el CPI |
+La captura muestra seis tablas; `gasto_ua` permanece independiente. La creación de las siete tablas está en [sql/schema.sql](sql/schema.sql).
 
-`gasto_ua` es la única tabla que se cruza por canal y no por jugador, porque el gasto de publicidad viene agregado de la red de anuncios.
+## Trabajo realizado
 
-## Modelo de datos en PostgreSQL
+Exploración de calidad, normalización de categorías y fechas, eliminación de duplicados, validación de relaciones y exportación de datos limpios. Las métricas se calcularon en SQL y los gráficos se reprodujeron con pandas desde los CSV.
 
-![Diagrama de relaciones entre usuarios, sesiones, partidas, compras, productos e ingresos publicitarios](docs/img/schema.png)
+- **Compras:** excluidos 67 reembolsos y 12 operaciones en MXN; quedan 4.479 ventas válidas en euros.
+- **Sesiones:** excluidas 60 duraciones fuera de 1–3.600 segundos y 312 duplicados; quedan 44.573 sesiones.
+- **Datos desconocidos:** conservados como nulos. Fechas corregidas con formatos explícitos. [Detalle de la corrección](docs/correccion_fechas.md).
 
-`usuarios` se relaciona con `sesiones`, `partidas`, `compras` e `ingresos_ads` mediante `user_id`. Las compras también se relacionan con `productos_iap` mediante `producto_id`.
-
-La captura muestra seis tablas. `gasto_ua` es la séptima: permanece independiente, sin claves foráneas, y no aparece en esta imagen.
-
-El archivo [`sql/schema.sql`](sql/schema.sql) contiene la creación de las siete tablas, sus tipos de datos y sus restricciones.
-
-## Estructura del proyecto
+## Estructura
 
 ```text
-playloop-game-industry/
-├── data/
-│ ├── raw/ # CSV originales, sin tocar 
-│ └── processed/ # datos limpios, listos para calcular
-├── notebooks/ # exploración, limpieza, cálculo de KPIs
-├── sql/
-│ └── schema.sql # creación de las siete tablas en PostgreSQL
-├── docs/ # resumen ejecutivo, gráficos exportados
-│ └── img/
-│     └── schema.png # diagrama de relaciones
-└── README.md
+data/raw/                          CSV originales
+data/processed/                    CSV limpios
+notebooks/01_exploracion.ipynb      Diagnóstico de las siete tablas
+notebooks/02_limpieza.ipynb         Transformaciones y comprobaciones
+notebooks/03_analisis.ipynb         Actividad, monetización y canales en SQL
+notebooks/04_visualizaciones.ipynb  Gráficos desde CSV con pandas
+sql/schema.sql                     Tablas y relaciones de PostgreSQL
+scripts/carga_postgres.py           Carga de los CSV limpios
+docs/informe_ejecutivo.md           Hallazgos, recomendación y límites
+docs/img/                          Gráficos y diagrama del modelo
 ```
 
+## Reproducción breve
 
-## Metodología
+1. Crear un entorno Python e instalar dependencias: `pip install -r requirements.txt`.
+2. Ejecutar `01_exploracion.ipynb` y `02_limpieza.ipynb` desde `notebooks/`.
+3. Crear una base PostgreSQL llamada `playloop` y ejecutar `sql/schema.sql`.
+4. Crear `.env` en la raíz con `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASSWORD`. Está excluido de Git.
+5. Desde la raíz, ejecutar `python scripts/carga_postgres.py` y después `03_analisis.ipynb`. La carga omite las tablas que ya contienen datos.
+6. Ejecutar `04_visualizaciones.ipynb` para generar las imágenes; solo necesita los CSV limpios, sin PostgreSQL.
 
-1. **Encuadrar** — convertir la pregunta vaga en preguntas medibles 
-2. **Explorar** — abrir los ficheros y ver qué hay, sin arreglar nada todavía
-3. **Limpiar** — dejar los datos en un estado fiable
-4. **Calcular** — sacar las métricas que responden al encuadre
-5. **Comunicar** — convertir el número en algo que cambie una decisión
+## Alcance y límites
+
+El ROAS utiliza compras netas de una comisión asumida del 30% más anuncios registrados, dividido entre adquisición. **Un ROAS de 1 recupera ese gasto; no representa beneficio final.** El valor acumulado al corte no equivale al LTV completo.
+
+La retención usa cohortes elegibles para cada plazo; conversión y retorno todavía no están ajustados a igual antigüedad. Hay 600 ingresos publicitarios desconocidos y tres gastos superiores a 1.000 € pendientes de validar. El proyecto reproduce un caso educativo: la recomendación no implica una decisión tomada en una empresa real.
