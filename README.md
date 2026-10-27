@@ -1,8 +1,8 @@
 # PlayLoop — Captación, retención y retorno por canal
 
-Proyecto de portfolio basado en el [caso simulado de BigDataStack](https://bigdatastack.dev/profesion/analisis-datos/mundo-real/playloop), ampliado con exploración detallada, limpieza documentada, análisis SQL y visualizaciones en Python.
+Proyecto de portfolio basado en el [caso simulado de BigDataStack](https://bigdatastack.dev/profesion/analisis-datos/mundo-real/playloop), ampliado con exploración detallada, limpieza documentada, análisis SQL, visualizaciones en Python y un informe interactivo en Power BI.
 
-**Tecnologías:** Python · pandas · PostgreSQL · SQLAlchemy · matplotlib · seaborn.
+**Tecnologías:** Python · pandas · PostgreSQL · SQLAlchemy · matplotlib · seaborn · Power BI · Power Query · DAX.
 
 ## Pregunta de negocio
 
@@ -27,6 +27,15 @@ PlayLoop monetiza un juego móvil mediante compras dentro de la aplicación y an
 ![ROAS por canal: recuperación del gasto de adquisición](docs/img/roas_por_canal.png)
 
 **Entregas:** [informe ejecutivo](docs/informe_ejecutivo.md) · [retención por canal](docs/img/retencion_por_canal.png) · [conversión a pagador](docs/img/conversion_por_canal.png).
+
+## Informe en Power BI
+
+Archivo: **[PlayLoop_Analytics.pbix](powerbi/PlayLoop_Analytics.pbix)**. Utiliza los CSV limpios y contiene dos páginas:
+
+- **Captación y retorno:** jugadores, gasto, ingresos, ROAS de pago, comparación de CPI e ingreso por jugador y desglose económico por canal.
+- **Retención y monetización:** D1/D7/D30, conversión, cohortes elegibles y distribución del gasto por pagador, con filtros de canal, país, plataforma e instalación.
+
+[Modelo y medidas del informe](docs/powerbi.md). Para abrirlo, usar Power BI Desktop; para actualizar los datos, ajustar las rutas de origen a `data/processed/` en Power Query. El archivo local no requiere PostgreSQL y no implica publicación en Power BI Service.
 
 ## Datos y modelo
 
@@ -55,9 +64,11 @@ notebooks/01_exploracion.ipynb      Diagnóstico de las siete tablas
 notebooks/02_limpieza.ipynb         Transformaciones y comprobaciones
 notebooks/03_analisis.ipynb         Actividad, monetización y canales en SQL
 notebooks/04_visualizaciones.ipynb  Gráficos desde CSV con pandas
+powerbi/PlayLoop_Analytics.pbix     Informe interactivo de dos páginas
 sql/schema.sql                     Tablas y relaciones de PostgreSQL
 scripts/carga_postgres.py           Carga de los CSV limpios
 docs/informe_ejecutivo.md           Hallazgos, recomendación y límites
+docs/powerbi.md                     Modelo, medidas y filtros del informe
 docs/img/                          Gráficos y diagrama del modelo
 ```
 
@@ -69,6 +80,7 @@ docs/img/                          Gráficos y diagrama del modelo
 4. Crear `.env` en la raíz con `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASSWORD`. Está excluido de Git.
 5. Desde la raíz, ejecutar `python scripts/carga_postgres.py` y después `03_analisis.ipynb`. La carga omite las tablas que ya contienen datos.
 6. Ejecutar `04_visualizaciones.ipynb` para generar las imágenes; solo necesita los CSV limpios, sin PostgreSQL.
+7. Para la versión interactiva, abrir `powerbi/PlayLoop_Analytics.pbix` en Power BI Desktop y ajustar las rutas de los CSV si se desea actualizar.
 
 ## Alcance y límites
 
